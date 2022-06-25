@@ -5,8 +5,8 @@ uniform float time;
 
 vec4 effect(vec4 color, Image tx, vec2 tc, vec2 pc)
 {
-    float vx = abs(sin(time*3.0)) + 0.2;
-    float vy = abs(cos(time*5.0)) + 0.2;
+    float vx = sin(time*3.0);
+    float vy = cos(time*5.0);
     // fake chromatic aberration
     float sx = vx * aberration/love_ScreenSize.x;
     float sy = vy * aberration/love_ScreenSize.y;

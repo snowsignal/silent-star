@@ -17,7 +17,6 @@ tiny        = require 'tiny'
 local menu  = require 'menu'
 
 shader = love.graphics.newShader("abberation.glsl")
-love.graphics.setShader(shader)
 shader:send("time", 0)
 
 function love.load()

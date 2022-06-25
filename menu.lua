@@ -110,6 +110,7 @@ end
 
 function menu:draw()
     love.graphics.setCanvas(menuCanvas)
+    love.graphics.setShader()
     local offw, offh = love.graphics.getDimensions()
     local x, y = offw / 5.5, offh / 4
 
@@ -124,6 +125,7 @@ function menu:draw()
     volumeSlider:draw()
 
     love.graphics.setCanvas()
+    love.graphics.setShader(shader)
     love.graphics.draw(menuCanvas)
 end
 
