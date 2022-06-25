@@ -27,7 +27,7 @@ local volumeText = love.graphics.newText(buttonFont, volumeTitle)
 local volumeSlider =  newSlider(360, 450, 100, 0.5, 0, 1, function (v) love.audio.setVolume(v) end, {track = "line", knob = "circle"})
 
 local menu = { buttons = {} }
-local game = require "game"
+local openingCutscene = require "openingCutscene"
 
 local buttonColor = 150/255
 
@@ -98,8 +98,7 @@ local updateSystemFilter = tiny.rejectAll("draw")
 local time = 0
 
 function menu:update(dt)
-    time = time + dt
-    shader:send("time", time)
+    shader:send("punch", math.abs(getCurrentTrackNoise()))
     local newMousePress = love.mouse.isDown(1)
     mouseJustReleased = newMousePress and not mouseIsPressed
     mouseIsPressed = newMousePress
@@ -134,7 +133,7 @@ function menu:enter()
     playTrack("menu")
 
     local playButton = button_new("Play", 300, 300, function()
-        Gamestate.switch(game)
+        Gamestate.switch(openingCutscene)
     end)
 
     menu.world = tiny.world(

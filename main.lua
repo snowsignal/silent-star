@@ -17,10 +17,18 @@ tiny        = require 'tiny'
 local menu  = require 'menu'
 
 shader = love.graphics.newShader("abberation.glsl")
-shader:send("time", 0)
+shader:send("punch", 0)
+math.randomseed(os.time())
 
 function love.load()
     loadSounds()
     Gamestate.registerEvents()
     Gamestate.switch(menu)
+end
+
+function love.update(dt)
+    fadeOutTween:update(dt)
+    if activeTrack then
+        activeTrack:setVolume(fadeOutVolume.volume)
+    end
 end

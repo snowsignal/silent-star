@@ -1,19 +1,18 @@
 // jangsy5 code
-extern number aberration = 2.0;
+// with some tweaks by penguin
+float aberration = 10.0;
 
-uniform float time;
+uniform float punch;
 
 vec4 effect(vec4 color, Image tx, vec2 tc, vec2 pc)
 {
-    float vx = sin(time*3.0);
-    float vy = cos(time*5.0);
     // fake chromatic aberration
-    float sx = vx * aberration/love_ScreenSize.x;
-    float sy = vy * aberration/love_ScreenSize.y;
+    float sx = punch * aberration/love_ScreenSize.x;
+    float sy = punch * aberration/love_ScreenSize.y;
     vec4 r = Texel(tx, vec2(tc.x + sx, tc.y - sy));
     vec4 g = Texel(tx, vec2(tc.x, tc.y + sy));
     vec4 b = Texel(tx, vec2(tc.x - sx, tc.y - sy));
-    number a = (r.a + g.a + b.a)/3.0;
+    float a = (r.a + g.a + b.a)/3.0;
 
     return vec4(r.r, g.g, b.b, a);
 }
