@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Terra Ball-win64">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/makelove-build/win64/Terra Ball-win64.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

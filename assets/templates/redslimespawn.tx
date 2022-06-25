@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<template>
+ <object name="Red Slime" type="redslimespawn" width="32" height="32">
+  <properties>
+   <property name="movespeed" type="float" value="2"/>
+  </properties>
+ </object>
+</template>
