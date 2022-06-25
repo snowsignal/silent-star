@@ -8,6 +8,8 @@ local slider    = require 'simple_slider'
 
 local music     = require "music"
 
+local menuCanvas = love.graphics.newCanvas()
+
 local menuTitle = "Silent Star"
 
 local volumeTitle = "Volume"
@@ -93,15 +95,21 @@ end
 local drawSystemFilter = tiny.requireAll("draw")
 local updateSystemFilter = tiny.rejectAll("draw")
 
+local time = 0
+
 function menu:update(dt)
+    time = time + dt
+    shader:send("time", time)
     local newMousePress = love.mouse.isDown(1)
     mouseJustReleased = newMousePress and not mouseIsPressed
     mouseIsPressed = newMousePress
     volumeSlider:update()
+    menu.world.camera.position = menu.world.camera.position + Vector(0, 0.2)
     menu.world:update(dt, updateSystemFilter)
 end
 
 function menu:draw()
+    love.graphics.setCanvas(menuCanvas)
     local offw, offh = love.graphics.getDimensions()
     local x, y = offw / 5.5, offh / 4
 
@@ -114,6 +122,9 @@ function menu:draw()
     love.graphics.draw(volumeText, 300, 400)
     love.graphics.setLineWidth(4)
     volumeSlider:draw()
+
+    love.graphics.setCanvas()
+    love.graphics.draw(menuCanvas)
 end
 
 
@@ -137,8 +148,12 @@ function menu:enter()
         camera = {
             mousePosition = function()
                 return love.mouse.getPosition()
+            end,
+            position = function()
+                return menu.world.camera.position
             end
-        }
+        },
+        position = Vector()
     }
 end
 
