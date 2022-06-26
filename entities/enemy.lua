@@ -10,4 +10,16 @@ function Enemy:new(pos, size, sprite, weapons, health)
     }
 end
 
+function Enemy:spawnBasicShip(pos)
+    return Enemy:new(pos, )
+end
+
+function Enemy:spawnMissileShip(pos)
+
+end
+
+function Enemy:spawnCruiser(pos)
+
+end
+
 return Enemy

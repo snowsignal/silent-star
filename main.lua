@@ -17,6 +17,7 @@ Timer = require 'hump.timer'
 tiny        = require 'tiny'
 local menu  = require 'menu'
 local intro = require 'intro'
+local level1 = require 'level1'
 
 abberationShader = love.graphics.newShader("abberation.glsl")
 abberationShader:send("punch", 0)
@@ -31,5 +32,6 @@ end
 function love.load()
     loadSounds()
     Gamestate.registerEvents()
-    Gamestate.switch(intro)
+    love.audio.setVolume(0) -- TODO: remove
+    Gamestate.switch(level1)
 end

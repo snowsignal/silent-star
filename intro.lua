@@ -61,7 +61,7 @@ end
 
 local dopamine = love.graphics.newImage("assets/Dopamine.png")
 
-local invertShader = love.graphics.newShader("invert.glsl")
+local invertShader = love.graphics.newShader("invertred.glsl")
 
 function dopamineFarm()
     love.graphics.setCanvas()
@@ -69,6 +69,7 @@ function dopamineFarm()
     love.graphics.setShader(invertShader)
     love.graphics.push()
     love.graphics.scale( 0.5, 0.5 )
+    love.graphics.setColor(1, 0, 0)
     love.graphics.draw(dopamine, 400 / 0.5, 300 / 0.5, 0, 1, 1, dopamine:getWidth() / 2, dopamine:getHeight() / 2 + 75 / 0.5)
     love.graphics.pop()
     love.graphics.setShader()

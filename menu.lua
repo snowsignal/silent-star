@@ -12,8 +12,6 @@ local menuCanvas = love.graphics.newCanvas()
 
 local menuTitle = "Silent Star"
 
-local volumeTitle = "Volume"
-
 local backgroundDrawSystem = require "systems.backgroundDrawSystem"
 
 local velocitySystem = require "systems.velocitySystem"
@@ -26,9 +24,9 @@ local buttonFont = love.graphics.setNewFont("assets/fonts/VCR_OSD_MONO.ttf", 35)
 
 local title = love.graphics.newText(titleFont, menuTitle)
 
-local volumeText = love.graphics.newText(buttonFont, volumeTitle)
+local volumeImage = love.graphics.newImage("assets/volume.png")
 
-local volumeSlider =  newSlider(360, 450, 100, 0.5, 0, 1, function (v) love.audio.setVolume(v) end, {track = "line", knob = "circle"})
+local volumeSlider =  newSlider(100, 590, 100, 0.5, 0, 1, function (v) love.audio.setVolume(v) end, {track = "line", knob = "circle"})
 
 local menu = { buttons = {} }
 local openingCutscene = require "openingCutscene"
@@ -39,6 +37,9 @@ local buttonTextColor = 200 / 255
 
 local mouseIsPressed = false
 local mouseJustReleased = false
+
+local shockSystem = require 'systems.shockSystem'
+local enemySystem = require 'systems.enemySystem'
 
 local function pointInRectangle(pointx, pointy, rectx, recty, rectwidth, rectheight)
     return pointx > rectx and pointy > recty and pointx < rectx + rectwidth and pointy < recty + rectheight
@@ -117,10 +118,11 @@ function menu:update(dt)
     end
 end
 
+local invertShader = love.graphics.newShader("invert.glsl")
+
 function menu:draw()
     love.graphics.setCanvas(menuCanvas)
     love.graphics.setShader()
-    local offw, offh = love.graphics.getDimensions()
 
     local dt = love.timer.getDelta()
     menu.world:update(dt, drawSystemFilter)
@@ -128,7 +130,12 @@ function menu:draw()
     love.graphics.draw(title, 400 - title:getWidth() / 2, 100)
 
     love.graphics.setColor(color3(200 / 255))
-    love.graphics.draw(volumeText, 300, 400)
+    love.graphics.push()
+    love.graphics.setShader(invertShader)
+    love.graphics.scale(0.05, 0.05)
+    love.graphics.draw(volumeImage, 20 / 0.05, 575 / 0.05)
+    love.graphics.setShader()
+    love.graphics.pop()
     love.graphics.setLineWidth(4)
     volumeSlider:draw()
 
@@ -150,6 +157,8 @@ function menu:enter()
             backgroundDrawSystem,
             buttonSystem,
         buttonDrawSystem,
+            shockSystem,
+            enemySystem,
         -- Entities
             playButton,
             Background:new("stars", -50)
