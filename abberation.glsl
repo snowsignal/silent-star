@@ -1,6 +1,6 @@
 // jangsy5 code
 // with some tweaks by penguin
-float aberration = 10.0;
+float aberration = 5.0;
 
 uniform float punch;
 

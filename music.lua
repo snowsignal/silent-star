@@ -1,6 +1,6 @@
 -- There are initially fileName -> fileExt mappings and then become fileName -> source mappings.
 -- Why? Because it looks nice
-local sfx = {["game-start"] = "wav", ["menu-cancel"] = "wav", ["menu-close"] = "wav", ["menu-confirm"] = "wav", ["menu-navigate"] = "wav", ["menu-open"] = "wav", ["jump"] = "mp3"}
+local sfx = {glitch01 = "wav"}
 local tracks = {menu = "mp3", level1 = "mp3"}
 local tween = require 'tween'
 

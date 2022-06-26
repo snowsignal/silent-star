@@ -98,7 +98,7 @@ local updateSystemFilter = tiny.rejectAll("draw")
 local time = 0
 
 function menu:update(dt)
-    shader:send("punch", math.abs(getCurrentTrackNoise()))
+    abberationShader:send("punch", math.abs(getCurrentTrackNoise()))
     local newMousePress = love.mouse.isDown(1)
     mouseJustReleased = newMousePress and not mouseIsPressed
     mouseIsPressed = newMousePress
@@ -111,12 +111,11 @@ function menu:draw()
     love.graphics.setCanvas(menuCanvas)
     love.graphics.setShader()
     local offw, offh = love.graphics.getDimensions()
-    local x, y = offw / 5.5, offh / 4
 
     local dt = love.timer.getDelta()
     menu.world:update(dt, drawSystemFilter)
     love.graphics.setColor({1, 1, 1, 1})
-    love.graphics.draw(title, x, y)
+    love.graphics.draw(title, 400 - title:getWidth() / 2, 100)
 
     love.graphics.setColor(color3(200 / 255))
     love.graphics.draw(volumeText, 300, 400)
@@ -124,7 +123,7 @@ function menu:draw()
     volumeSlider:draw()
 
     love.graphics.setCanvas()
-    love.graphics.setShader(shader)
+    love.graphics.setShader(abberationShader)
     love.graphics.draw(menuCanvas)
 end
 
