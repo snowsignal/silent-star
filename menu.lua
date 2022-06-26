@@ -16,6 +16,10 @@ local volumeTitle = "Volume"
 
 local backgroundDrawSystem = require "systems.backgroundDrawSystem"
 
+local velocitySystem = require "systems.velocitySystem"
+
+local Background = require 'entities.background'
+
 local titleFont = love.graphics.setNewFont("assets/fonts/VCR_OSD_MONO.ttf", 100)
 
 local buttonFont = love.graphics.setNewFont("assets/fonts/VCR_OSD_MONO.ttf", 35)
@@ -98,13 +102,19 @@ local updateSystemFilter = tiny.rejectAll("draw")
 local time = 0
 
 function menu:update(dt)
-    abberationShader:send("punch", math.abs(getCurrentTrackNoise()))
-    local newMousePress = love.mouse.isDown(1)
-    mouseJustReleased = newMousePress and not mouseIsPressed
-    mouseIsPressed = newMousePress
-    volumeSlider:update()
-    menu.world.camera.position = menu.world.camera.position + Vector(0, 0.2)
-    menu.world:update(dt, updateSystemFilter)
+    if menu.exiting then
+        tiny.clearEntities(menu.world)
+        tiny.clearSystems(menu.world)
+        menu.world:refresh()
+        Gamestate.switch(openingCutscene)
+    else
+        abberationShader:send("punch", math.abs(getCurrentTrackNoise()))
+        local newMousePress = love.mouse.isDown(1)
+        mouseJustReleased = newMousePress and not mouseIsPressed
+        mouseIsPressed = newMousePress
+        volumeSlider:update()
+        menu.world:update(dt, updateSystemFilter)
+    end
 end
 
 function menu:draw()
@@ -127,34 +137,27 @@ function menu:draw()
     love.graphics.draw(menuCanvas)
 end
 
-
 function menu:enter()
     playTrack("menu")
 
     local playButton = button_new("Play", 300, 300, function()
-        Gamestate.switch(openingCutscene)
+        menu.exiting = true
     end)
 
     menu.world = tiny.world(
         -- Systems
+            velocitySystem,
             backgroundDrawSystem,
             buttonSystem,
         buttonDrawSystem,
         -- Entities
-            playButton
+            playButton,
+            Background:new("stars", -50)
     )
+end
 
-    menu.world.camera = {
-        camera = {
-            mousePosition = function()
-                return love.mouse.getPosition()
-            end,
-            position = function()
-                return menu.world.camera.position
-            end
-        },
-        position = Vector()
-    }
+function menu:leave()
+    menu.world:refresh()
 end
 
 return menu
