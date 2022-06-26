@@ -8,10 +8,6 @@ local tween = require 'tween'
 activeTrackName = nil
 activeTrack = nil
 
-fadeOutTween = tween.new(1, {}, {}, tween.easing.linear)
-
-fadeOutVolume = { volume = 1 }
-
 -- Loads everything into memory and ensures that the game hogs resources
 function loadSounds()
     for trackName, fileExt in pairs(tracks) do
@@ -35,12 +31,38 @@ function getCurrentTrackNoise()
     if activeTrack and activeTrackName then
         local pos = activeTrack:tell("samples")
         return tracks[activeTrackName]:getSample(pos)
+    else
+        return 0
+    end
+end
+
+local function stopMusicTween(duration, func)
+    local fadeOutVolume = { volume = 1}
+    local fadeOutTween = tween.new(duration, fadeOutVolume, { volume = 0 }, tween.easing.linear)
+
+    -- Hook into the update callback
+    local previousUpdate = love.update
+    function love.update(...)
+        previousUpdate(...)
+        if not fadeOutTween:update(...) then
+            if activeTrack then
+                func(fadeOutVolume)
+            end
+        end
     end
 end
 
 function stopMusicWithFadeout(duration)
-    fadeOutVolume = { volume = 1}
-    fadeOutTween = tween.new(duration, fadeOutVolume, { volume = 0 }, tween.easing.linear)
+    stopMusicTween(duration, function(t)
+        activeTrack:setVolume(t.volume)
+    end)
+end
+
+function stopMusicWithFadeoutAndSlowDown(duration)
+    stopMusicTween(duration, function(t)
+        activeTrack:setPitch(t.volume + 0.01)
+        activeTrack:setVolume(t.volume)
+    end)
 end
 
 -- only one at a time. loops automatically
@@ -49,6 +71,7 @@ function playTrack(trackName)
         stopMusic()
         activeTrackName = trackName
         activeTrack = love.audio.newSource(tracks[trackName])
+        activeTrack:setVolume(1)
         activeTrack:setLooping(true) -- this will be deathloop in 2013
         activeTrack:play()
     end

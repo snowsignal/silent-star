@@ -13,6 +13,7 @@ Vector      = require 'hump.vector'
 Sti         = require 'sti.init'
 Bump        = require 'bump'
 Gamestate   = require 'hump.gamestate'
+Timer = require 'hump.timer'
 tiny        = require 'tiny'
 local menu  = require 'menu'
 
@@ -20,15 +21,12 @@ shader = love.graphics.newShader("abberation.glsl")
 shader:send("punch", 0)
 math.randomseed(os.time())
 
+function love.update(dt)
+    Timer.update(dt)
+end
+
 function love.load()
     loadSounds()
     Gamestate.registerEvents()
     Gamestate.switch(menu)
-end
-
-function love.update(dt)
-    fadeOutTween:update(dt)
-    if activeTrack then
-        activeTrack:setVolume(fadeOutVolume.volume)
-    end
 end

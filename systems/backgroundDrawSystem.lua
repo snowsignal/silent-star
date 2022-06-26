@@ -7,8 +7,7 @@ backimg:setWrap("repeat", "repeat")
 local backimg_w = backimg:getWidth()
 local backimg_h = backimg:getHeight()
 
-function backgroundDrawSystem:update(dt)
-    --self.world.camera:detach()
+function backgroundDrawSystem:update()
     local lg = love.graphics
     local scale = 1
     local cpos = self.world.camera.camera:position()
@@ -17,7 +16,6 @@ function backgroundDrawSystem:update(dt)
             lg.draw(backimg, x, y, 0, scale, scale)
         end
     end
-    --self.world.camera:attach()
 end
 
 return backgroundDrawSystem

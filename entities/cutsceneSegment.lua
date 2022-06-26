@@ -1,12 +1,18 @@
+local utils = require 'utils'
+
 local CutsceneSegment = {}
+
+local wrapLimit = 600
 
 local font = love.graphics.setNewFont("assets/fonts/VCR_OSD_MONO.ttf", 20)
 
 function CutsceneSegment:new(text, fx, waitTillNext)
+    _, wrappedText = font:getWrap(text, wrapLimit)
+    wrappedText = utils.map(wrappedText, function(t) return love.graphics.newText(font, t) end)
     return {
-        text = love.graphics.newText(font, text),
+        text = wrappedText,
         fx = fx or nil,
-        waitTillNext = waitTillNext or 2.5
+        waitTillNext = waitTillNext or 0.5
     }
 end
 
