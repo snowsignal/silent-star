@@ -17,6 +17,7 @@ function Player:new(x, y)
         pos = Vector(x, y),
         vel = Vector(),
         size = Vector(96, 120),
+        scale = Vector(1, 1)
     }
 end
 

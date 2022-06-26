@@ -7,6 +7,12 @@ local velocitySystem = require 'systems.velocitySystem'
 local playerDrawSystem = require 'systems.playerDrawSystem'
 local playerMovementSystem = require 'systems.playerMovementSystem'
 
+local shockSystem = require 'systems.shockSystem'
+local Story = require 'entities.story'
+
+local enemySystem = require 'systems.enemySystem'
+local enemyDrawSystem = require 'systems.enemyDrawSystem'
+
 local projectileDrawSystem = require 'systems.projectileDrawSystem'
 
 local Input = require 'boipushy'
@@ -32,11 +38,15 @@ function Level1:enter()
     self.world = tiny.world(
             backgroundDrawSystem,
             projectileDrawSystem,
+            enemyDrawSystem,
             playerDrawSystem,
             playerMovementSystem,
+            shockSystem,
+            enemySystem,
             velocitySystem,
             Player:new(300, 300),
-            Background:new("stars")
+            Background:new("stars"),
+            Story:new({}, {})
     )
     self.world.wave = 1
     self.world.wavetotal = 8
