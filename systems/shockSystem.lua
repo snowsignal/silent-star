@@ -3,22 +3,63 @@
 
 local tiny = require 'tiny'
 
-local Enemy = require 'entities.enemy'
+local finale = require 'finale'
+
 local shockSystem = tiny.processingSystem()
 shockSystem.filter = tiny.requireAll("story")
 
-function shockSystem:onAdd(e)
-    -- Set up callbacks
-    local story = e.story
-    local wave = 1
-    local wavetotal = #story.waves
-    self.world.remainingEnemies = 20
-    self.world.timer:every(0.25, function()
-        vel = Vector(0, 400)
-        self.world:add(Enemy:spawnBasicShip(Vector(math.random(50, 750), -50), vel))
-        self.world.remainingEnemies = self.world.remainingEnemies - 1
+function shockSystem:nextWaveSegment()
+    self.waveSegmentIndex = self.waveSegmentIndex + 1
+    if not self.wave or self.waveSegmentIndex > #self.wave.segments then
+        return false
+    end
+    self:updateWave()
+    return true
+end
 
-    end)
+function shockSystem:nextWave()
+    self.waveSegmentIndex = 1
+    self.world.wave = self.world.wave + 1
+    if self.world.wave > self.waveTotal then
+        return false
+    end
+    self:updateWave()
+    return true
+end
+
+function shockSystem:updateWave()
+    self.wave = self.story.waves[self.world.wave]
+    self.waveSegment = self.wave.segments[self.waveSegmentIndex]
+end
+
+function shockSystem:onAdd(e)
+    if self.story then
+        print("Initialized shockSystem twice")
+        love.quit()
+    end
+    -- Set up callbacks
+    self.story = e.story
+    self.world.wave = 0
+    self.waveSegmentIndex = 1
+    self.waveTotal = #self.story.waves
+end
+
+function shockSystem:process()
+    -- Check if we can continue
+    if not self.wave or self.wave.readyToAdvance then
+        if self.waveTimer then
+            self.world.timer:cancel(self.waveTimer)
+        end
+        if not self:nextWaveSegment() then
+            if not self:nextWave() then
+                Gamestate.switch(finale)
+                return
+            end
+        end
+        print("Next wave!")
+        self.wave.readyToAdvance = false
+        self.waveTimer = self.waveSegment(self.wave)
+    end
 end
 
 return shockSystem

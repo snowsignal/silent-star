@@ -23,8 +23,12 @@ function Projectile:new(pos, size, sprite, damage, vel, scale, onDeath, friendly
     }
 end
 
-function Projectile:circularBullet(pos)
-    return Projectile:new(pos, Vector(30, 30), "projectiles/bullets/bulletCircle", 50, Vector(0, 500), Vector(0.25, 0.5))
+function Projectile:circularBullet(pos, vel)
+    return Projectile:new(pos, Vector(30, 30), "projectiles/bullets/bulletCircle", 50, vel, Vector(0.25, 0.5))
+end
+
+function Projectile:mine(pos)
+    return Projectile:new(pos, Vector(30, 30), "projectiles/bullets/bulletCircle", 50, Vector(), Vector(0.75, 0.75))
 end
 
 function Projectile:rectangleBullet(pos)

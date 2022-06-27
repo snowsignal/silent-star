@@ -1,10 +1,9 @@
 local Wave = {}
 
-function Wave:new(wageSegments)
+function Wave:new(waveSegments)
     return {
-        wave = {
-            waveSegments = waveSegments
-        }
+        segments = waveSegments,
+        readyToAdvance = true
     }
 end
 

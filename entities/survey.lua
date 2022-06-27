@@ -1,37 +1,30 @@
-local Survey = {}
-
-local questionWrapLimit = 600
-local answerWrapLimit = 300
-
-local font = love.graphics.setNewFont("assets/fonts/VCR_OSD_MONO.ttf", 20)
+local Survey = {questionWrapLimit = 600, answerWrapLimit = 300, font = love.graphics.setNewFont("assets/fonts/VCR_OSD_MONO.ttf", 20)}
+local utils = require 'utils'
 
 function wrapText(text, wrapLimit)
-    _, wrappedText = font:getWrap(text, wrapLimit)
-    wrappedText = utils.map(wrappedText, function(t) return love.graphics.newText(font, t) end)
+    _, wrappedText = Survey.font:getWrap(text, wrapLimit)
+    wrappedText = utils.map(wrappedText, function(t) return love.graphics.newText(Survey.font, t) end)
+    return wrappedText
 end
 
 function Survey:question(text, fx)
     return {
-        text = wrapText(text, questionWrapLimit),
+        text = wrapText(text, self.questionWrapLimit),
         fx = fx,
     }
 end
 
 function Survey:answer(text, fx)
-    _, wrappedText = font:getWrap(text, wrapLimit)
-    wrappedText = utils.map(wrappedText, function(t) return love.graphics.newText(font, t) end)
     return {
-        text = wrapText(text, answerWrapLimit),
+        text = wrapText(text, self.answerWrapLimit),
         fx = fx
     }
 end
 
-function Survey:new(questions, answers)
+function Survey:new(question, answers)
     return {
-        survey = {
-            questions = questions,
-            answers = answers,
-        }
+        question = question,
+        answers = answers,
     }
 end
 

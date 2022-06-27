@@ -25,6 +25,8 @@ distortionShader = love.graphics.newShader("distortion.glsl")
 distortionShader:send("elapsedTime", 0)
 math.randomseed(os.time())
 
+local finale = require 'finale'
+
 function love.update(dt)
     Timer.update(dt)
 end
@@ -33,5 +35,5 @@ function love.load()
     loadSounds()
     Gamestate.registerEvents()
     --love.audio.setVolume(0) -- TODO: remove
-    Gamestate.switch(level1)
+    Gamestate.switch(intro)
 end
