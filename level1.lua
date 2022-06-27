@@ -71,6 +71,7 @@ function Level1:enter()
             rightBoundary
     )
     self.world.timer = Timer.new()
+    self.world.canvas = love.graphics.newCanvas()
 
     self.world.stage = {
         type = "normal"
@@ -160,15 +161,77 @@ function Level1:enter()
                     self.world.remainingEnemies = self.world.remainingEnemies - 1
                 end)
             end,
+            function(wave)
+                self.world.remainingEnemies = 10
+                local y = 100
+                local left = false
+                return self.world.timer:every(0.01, function()
+                    y = y + 100
+                    left = not left
+                    if self.world.remainingEnemies <= 0 then
+                        wave.readyToAdvance = true
+                        return
+                    end
+                    local vel
+                    if left then
+                        vel = Vector(250,0)
+                    else
+                        vel = Vector(-250,0)
+                    end
+                    local pos
+                    if left then
+                        pos = Vector(-50, y)
+                    else
+                        pos = Vector(850, y)
+                    end
+                    self.world:add(Enemy:spawnMineLayer(pos, vel))
+                    self.world.remainingEnemies = self.world.remainingEnemies - 1
+                end)
+            end,
         }),
         Wave:new({
             function(wave)
+                self.world.shader = abberationShader
+                abberationShader:send("punch", 0.5)
+                self.world.stage = { type = "weird" }
                 stopMusicWithFadeout(3)
                 self.world.timer:after(4, function() playTrack("finalDecision") end)
+                self.world.remainingEnemies = 40
 
                 return self.world.timer:every(1, function()
-                    vel = Vector(0, 220)
-                    self.world:add(Enemy:spawnShooterShip(Vector(math.random(300, 600), -50), vel))
+                    if self.world.remainingEnemies <= 0 then
+                        wave.readyToAdvance = true
+                        return
+                    end
+                    local vel = Vector(math.random(0, 100), math.random(300, 700))
+                    local vel2 = Vector(-vel.x, vel.y)
+                    self.world:add(Enemy:spawnFastShooter(Vector(math.random(0, 800), -50), vel, vel2))
+                    self.world.remainingEnemies = self.world.remainingEnemies - 1
+                end)
+            end
+        }),
+        Wave:new({
+            function(wave)
+                abberationShader:send("punch", 0.75)
+                self.world.stage = { type = "wtf" }
+                self.world.timer:after(30, function() self.world.stage = { type = "finale" } end)
+
+                return self.world.timer:every(0.5, function()
+                    musicSettings.pitchOffset = musicSettings.pitchOffset + 0.01
+                    if false then
+                        wave.readyToAdvance = true
+                        return
+                    end
+                    local playerPos
+                    for _, ent in ipairs(self.world.entities) do
+                        if ent.player then
+                            playerPos = ent.pos
+                        end
+                    end
+                    local vel = Vector(0, math.random(800, 1500 + musicSettings.pitchOffset * 10))
+                    if playerPos then
+                        self.world:add(Enemy:spawnBasicShip(Vector(playerPos.x, -50), vel))
+                    end
                 end)
             end
         })
@@ -216,16 +279,24 @@ function Level1:update(dt)
 end
 
 function Level1:draw()
+    love.graphics.setShader()
+    love.graphics.setCanvas(self.world.canvas)
     self.world:update(dt, drawSystemFilter)
     self:drawWave()
+
+    love.graphics.setCanvas()
+    if self.world.shader then
+        love.graphics.setShader(self.world.shader)
+    end
+    love.graphics.draw(self.world.canvas)
 end
 
 function Level1:resume()
     resumeMusicWithFadeIn(2)
     self.world.killed = false
+    self.world:add(Player:new(self.world.killedPos.x, self.world.killedPos.y))
     self.world.killedPos = nil
     self.world.shownExplosion = false
-    self.world:add(Player:new(300, 300))
     self.world:refresh()
 end
 

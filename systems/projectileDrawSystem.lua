@@ -16,7 +16,7 @@ function projectileDrawSystem:process(e)
     love.graphics.scale(e.scale.x, e.scale.y)
     love.graphics.draw(e.projectile.sprite, 0, 0)
     love.graphics.pop()
-    love.graphics.setCanvas()
+    love.graphics.setCanvas(self.world.canvas)
 
     love.graphics.draw(scaleCanvas, e.pos.x, e.pos.y, e.rotation, 1, 1, e.size.x / 2 * e.scale.x, e.size.y / 2 * e.scale.y)
 end

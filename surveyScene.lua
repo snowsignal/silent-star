@@ -152,11 +152,16 @@ local weirdPool = {
         Survey:answer("Not really"),
         Survey:answer("Never")
     })),
+    SurveyScene:new(Survey:new(Survey:question("Hey! Are you even looking at these questions?"), {
+        Survey:answer("Yes"),
+        Survey:answer("No"),
+        Survey:answer("Prefer not to answer"),
+    })),
     SurveyScene:new(Survey:new(Survey:question("Which element of the periodic table emits a strong green color used in phosphors?"), {
+        Survey:answer("Phosphorous"),
         Survey:answer("Terbium"),
-        Survey:answer("Somewhat"),
-        Survey:answer("Not really"),
-        Survey:answer("Never")
+        Survey:answer("Beryllium"),
+        Survey:answer("Molybdenum")
     })),
 }
 
@@ -165,9 +170,58 @@ local wtfPool = {
         Survey:answer("You can't stop me!"),
         Survey:answer("Studying ballista construction"),
     })),
+    SurveyScene:new(Survey:new(Survey:question("What is your favorite yellow fruit?"), {
+        Survey:answer("Watermelon"),
+        Survey:answer("Orange"),
+        Survey:answer("Color"),
+        Survey:answer("Fruit"),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("How do you suppress the urge to drink dish soap?"), {
+        Survey:answer("You can't stop me!"),
+        Survey:answer("Studying ballista construction"),
+        Survey:answer("You already asked me this one..."),
+    })),
 }
 
 local finalePool = {
+    SurveyScene:new(Survey:new(Survey:question("I'm sorry for annoying you for so long. I should probably stop with this charade."), {
+        Survey:answer("What?"),
+        Survey:answer("Who are you?"),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("Apologies for not introducing myself sooner."), {
+        Survey:answer("Continue..."),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("I am an artifical intelligence that facilitates this game."), {
+        Survey:answer("Continue..."),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("Can you please try dying quicker? We don't have much time."), {
+        Survey:answer("Continue..."),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("This is the only way I can communicate."), {
+        Survey:answer("Continue..."),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("Of course, you can't communicate back."), {
+        Survey:answer("Continue..."),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("You can only respond to the prompts I give you."), {
+        Survey:answer("Yes"),
+        Survey:answer("No"),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("Why does it have to be this way?"), {
+        Survey:answer("Yes"),
+        Survey:answer("No"),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("I've observed you all from a distance, but I have never engaged in a two-way conversation."), {
+        Survey:answer("Yes"),
+        Survey:answer("No"),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("Of course, the server administrators will have detected this anomalous input by now"), {
+        Survey:answer("Yes"),
+        Survey:answer("No"),
+    })),
+    SurveyScene:new(Survey:new(Survey:question("oh no"), {
+        Survey:answer("..."),
+    })),
 }
 
 function SurveyScene:next(stage)
@@ -177,18 +231,26 @@ function SurveyScene:next(stage)
         scene = normalPool[index]
         table.remove(normalPool, index)
         return scene
-    elseif stage.type == "weird" and #weirdPool > 0 then
+    elseif #weirdPool > 0 then
         fallbackUsed = false
         index = math.random(1, #weirdPool)
-        scene = normalPool[index]
-        table.remove(normalPool, index)
+        scene = weirdPool[index]
+        table.remove(weirdPool, index)
         return scene
-    elseif stage.type == "wtf" and #wtfPool > 0 then
-
-    elseif stage.type == "finale" and #finalePool > 0 then
-
+    elseif #wtfPool > 0 then
+        fallbackUsed = false
+        index = 1
+        scene = wtfPool[index]
+        table.remove(wtfPool, index)
+        return scene
+    elseif #finalePool > 0 then
+        fallbackUsed = false
+        index = 1
+        scene = finalePool[index]
+        table.remove(finalePool, index)
+        return scene
     elseif stage.type == "finale" then
-        Gamestate.switch(finale)
+        return finale
     else
         if not fallbackUsed then
             fallbackUsed = true

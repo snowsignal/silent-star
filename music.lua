@@ -8,6 +8,8 @@ activeTrackName = nil
 activeTrackPos = nil
 activeTrack = nil
 
+musicSettings = { musicVolume = 1, pitchOffset = 0.01 }
+
 activeMusicTween = nil
 
 -- Loads everything into memory and ensures that the game hogs resources
@@ -51,7 +53,7 @@ local function musicTween(duration, vStart, vEnd, during, after)
 end
 
 function stopMusicWithFadeout(duration)
-    musicTween(duration, 1, 0, function(t)
+    musicTween(duration, musicSettings.musicVolume, 0, function(t)
         activeTrack:setVolume(t.volume)
     end, function()
         stopMusic()
@@ -59,8 +61,8 @@ function stopMusicWithFadeout(duration)
 end
 
 function pauseMusicWithFadeoutAndSlowDown(duration)
-    musicTween(duration, 1, 0, function(t)
-        activeTrack:setPitch(t.volume + 0.01)
+    musicTween(duration, musicSettings.musicVolume, 0, function(t)
+        activeTrack:setPitch(t.volume / musicSettings.musicVolume + musicSettings.pitchOffset)
         activeTrack:setVolume(t.volume)
     end, function()
         pauseMusic()
@@ -69,11 +71,11 @@ end
 
 function resumeMusicWithFadeIn(duration)
 
-    musicTween(duration, 0, 1, function(t)
+    musicTween(duration, 0, musicSettings.musicVolume, function(t)
         if not activeTrack:isPlaying() then
             resumeMusic()
         end
-        activeTrack:setPitch(t.volume + 0.01)
+        activeTrack:setPitch(t.volume / musicSettings.musicVolume + musicSettings.pitchOffset)
         activeTrack:setVolume(t.volume)
     end, function() end)
 end
@@ -109,7 +111,7 @@ function pauseMusic()
 end
 
 function resumeMusic()
-    if activeTrack then
+    if activeTrack and activeTrackPos then
         activeTrack:play()
         activeTrack:seek(activeTrackPos, "samples")
     end

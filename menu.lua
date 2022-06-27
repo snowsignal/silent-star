@@ -26,7 +26,10 @@ local title = love.graphics.newText(titleFont, menuTitle)
 
 local volumeImage = love.graphics.newImage("assets/volume.png")
 
-local volumeSlider =  newSlider(100, 590, 100, 0.5, 0, 1, function (v) love.audio.setVolume(v) end, {track = "line", knob = "circle"})
+local volumeSlider =  newSlider(100, 590, 100, 0.5, 0, 1, function (v)
+    musicSettings.musicVolume = v
+    love.audio.setVolume(musicSettings.musicVolume)
+end, {track = "line", knob = "circle"})
 
 local menu = { buttons = {} }
 local openingCutscene = require "openingCutscene"

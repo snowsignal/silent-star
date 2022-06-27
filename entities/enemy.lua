@@ -30,6 +30,13 @@ function Enemy:spawnShooterShip(pos, vel)
     end, 3, 100)
 end
 
+function Enemy:spawnFastShooter(pos, vel, vel2)
+    return Enemy:new(pos, Vector(96, 120), vel, "spaceships/basicship", Vector(0.5, 0.5), function(me, world)
+        world:add(Projectile:circularBullet(me.pos, me.vel + vel))
+        world:add(Projectile:circularBullet(me.pos, me.vel + vel2))
+    end, 0.5, 100)
+end
+
 function Enemy:spawnMineLayer(pos, vel)
     return Enemy:new(pos, Vector(110, 80), vel, "spaceships/minelayer", Vector(0.75, 0.75), function(me, world)
         local mine = Projectile:mine(me.pos)
