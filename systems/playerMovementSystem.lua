@@ -3,13 +3,20 @@ local Projectile = require 'entities.projectile'
 local playerMovementSystem = tiny.processingSystem()
 playerMovementSystem.filter = tiny.requireAll("player", "vel")
 
+playerFireRate = 0.125
+
 function playerMovementSystem:process(e)
     local input = self.world.input
 
     if input:down('player-fire') and e.player.canFire then
         e.player.canFire = false
         self.world:add(Projectile:rectangleBullet(e.pos))
-        self.world.timer:after(0.125, function() e.player.canFire = true end)
+        self.world.timer:after(playerFireRate, function() e.player.canFire = true end)
+    elseif input:down('player-secondary-fire') and e.player.canFire then
+        e.player.canFire = false
+        self.world:add(Projectile:secondaryBullet(e.pos, false))
+        self.world:add(Projectile:secondaryBullet(e.pos, true))
+        self.world.timer:after(playerFireRate * 3, function() e.player.canFire = true end)
     end
 
     if input:down('player-right') then

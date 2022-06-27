@@ -48,7 +48,11 @@ function shockSystem:process()
     -- Check if we can continue
     if not self.wave or self.wave.readyToAdvance then
         if self.waveTimer then
-            self.world.timer:cancel(self.waveTimer)
+            if self.waveTimer.cancel then
+                self.waveTimer:cancel()
+            else
+                self.world.timer:cancel(self.waveTimer)
+            end
         end
         if not self:nextWaveSegment() then
             if not self:nextWave() then
@@ -56,7 +60,6 @@ function shockSystem:process()
                 return
             end
         end
-        print("Next wave!")
         self.wave.readyToAdvance = false
         self.waveTimer = self.waveSegment(self.wave)
     end

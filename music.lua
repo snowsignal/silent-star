@@ -49,7 +49,10 @@ local function musicTween(duration, vStart, vEnd, during, after)
     activeMusicTween = Timer.during(duration, function(dt)
         fadeOutVolume.volume = fadeOutVolume.volume + differential * dt
         during(fadeOutVolume)
-    end, after)
+    end, function()
+        after()
+        activeMusicTween = nil
+    end)
 end
 
 function stopMusicWithFadeout(duration)
@@ -71,7 +74,7 @@ end
 
 function resumeMusicWithFadeIn(duration)
 
-    musicTween(duration, 0, musicSettings.musicVolume, function(t)
+    musicTween(duration, activeTrack:getVolume(), musicSettings.musicVolume, function(t)
         if not activeTrack:isPlaying() then
             resumeMusic()
         end
@@ -86,7 +89,7 @@ function playTrack(trackName)
         stopMusic()
         activeTrackName = trackName
         activeTrack = love.audio.newSource(tracks[trackName])
-        activeTrack:setVolume(1)
+        activeTrack:setVolume(musicSettings.musicVolume)
         activeTrack:setLooping(true) -- this will be deathloop in 2013
         activeTrack:play()
     end

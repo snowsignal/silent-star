@@ -32,6 +32,7 @@ function velocitySystem:process(e, dt)
                 self.world:add(Explosion:new(col.other.pos, Vector(0.2, 0.2)))
                 if e.enemy.health <= 0 then
                     tiny.removeEntity(self.world, e)
+                    score = score + e.enemy.score
                     self.world:add(Explosion:new(col.other.pos, Vector(2, 2)))
                     return
                 end
@@ -46,7 +47,7 @@ function velocitySystem:process(e, dt)
                     self.world.killed = true
                     self.world.killedPos = e.pos
                 end
-                e.player.invincibility = 2
+                e.player.invincibility = defaultInvincibility
             end
         end
         e.pos = Vector(actual_x, actual_y)
