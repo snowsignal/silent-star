@@ -12,7 +12,13 @@ function shockSystem:onAdd(e)
     local story = e.story
     local wave = 1
     local wavetotal = #story.waves
-    self.world:add(Enemy:spawnBasicShip(Vector(400, -50)))
+    self.world.remainingEnemies = 20
+    Timer.every(0.25, function()
+        vel = Vector(0, 400)
+        self.world:add(Enemy:spawnBasicShip(Vector(math.random(50, 750), -50), vel))
+        self.world.remainingEnemies = self.world.remainingEnemies - 1
+
+    end)
 end
 
 return shockSystem

@@ -14,7 +14,7 @@ local menuTitle = "Silent Star"
 
 local backgroundDrawSystem = require "systems.backgroundDrawSystem"
 
-local velocitySystem = require "systems.velocitySystem"
+local velocitySystem = require "systems.damageSystem"
 
 local Background = require 'entities.background'
 

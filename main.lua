@@ -32,6 +32,6 @@ end
 function love.load()
     loadSounds()
     Gamestate.registerEvents()
-    love.audio.setVolume(0) -- TODO: remove
-    Gamestate.switch(level1)
+    --love.audio.setVolume(0) -- TODO: remove
+    Gamestate.switch(intro)
 end

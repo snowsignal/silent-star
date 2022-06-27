@@ -4,7 +4,7 @@ enemyDrawSystem.filter = tiny.requireAll("pos", "vel", "size", "enemy")
 
 function enemyDrawSystem:process(e)
     love.graphics.push()
-    local size = e.size
+    local size = e.originalSize
     local scale = Vector(e.scale.x, e.scale.y)
     if e.vel.x > 0 then
         scale.x = scale.x * 0.9
@@ -12,7 +12,7 @@ function enemyDrawSystem:process(e)
         scale.x = scale.x * -0.9
     end
     love.graphics.scale( scale.x, scale.y)
-    love.graphics.draw(e.enemy.sprite, e.pos.x / scale.x, e.pos.y / scale.y, 0, 1, -1, size.x / 2, size.y / 2)
+    love.graphics.draw(e.enemy.sprite, e.pos.x / scale.x, e.pos.y / scale.y, math.rad(180), 1, 1, size.x / 2, size.y / 2)
     love.graphics.pop()
 end
 

@@ -14,4 +14,8 @@ function SurveyScene:new(survey)
     return surveyScene
 end
 
+function SurveyScene:normal()
+    return SurveyScene:new({})
+end
+
 return SurveyScene

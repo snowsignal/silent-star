@@ -1,7 +1,7 @@
 local Vector      = require 'hump.vector'
 
 -- Const parameters for the player
-local movespeed = 240
+local movespeed = 400
 
 local Player = {}
 
@@ -12,12 +12,15 @@ function Player:new(x, y)
         player = {
             movespeed = movespeed,
             sprite = playerSprite,
-            canFire = true
+            canFire = true,
+            invincibility = 0,
+            lives = 1,
         },
         pos = Vector(x, y),
         vel = Vector(),
-        size = Vector(96, 120),
-        scale = Vector(1, 1)
+        size = Vector(96, 120) / 4,
+        originalSize = Vector(96, 120),
+        scale = Vector(1, 1),
     }
 end
 
