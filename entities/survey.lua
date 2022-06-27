@@ -26,10 +26,11 @@ function Survey:answer(text, fx)
     }
 end
 
-function Survey:new(question, answers)
+function Survey:new(questions, answers)
     return {
         survey = {
-            questions = questions
+            questions = questions,
+            answers = answers,
         }
     }
 end

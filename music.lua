@@ -2,11 +2,13 @@
 -- Why? Because it looks nice
 local sfx = {glitch01 = "wav", death = "mp3", wavecomplete = "mp3"}
 local tracks = {menu = "mp3", level1 = "mp3", finalDecision = "ogg"}
-local tween = require 'tween'
 
 -- ye active music track
 activeTrackName = nil
+activeTrackPos = nil
 activeTrack = nil
+
+activeMusicTween = nil
 
 -- Loads everything into memory and ensures that the game hogs resources
 function loadSounds()
@@ -36,33 +38,44 @@ function getCurrentTrackNoise()
     end
 end
 
-local function stopMusicTween(duration, func)
-    local fadeOutVolume = { volume = 1}
-    local fadeOutTween = tween.new(duration, fadeOutVolume, { volume = 0 }, tween.easing.linear)
-
-    -- Hook into the update callback
-    local previousUpdate = love.update
-    function love.update(...)
-        previousUpdate(...)
-        if not fadeOutTween:update(...) then
-            if activeTrack then
-                func(fadeOutVolume)
-            end
-        end
+local function musicTween(duration, vStart, vEnd, during, after)
+    if activeMusicTween then
+        Timer.cancel(activeMusicTween)
     end
+    local fadeOutVolume = { volume = vStart}
+    local differential = (vEnd - vStart) / duration
+    activeMusicTween = Timer.during(duration, function(dt)
+        fadeOutVolume.volume = fadeOutVolume.volume + differential * dt
+        during(fadeOutVolume)
+    end, after)
 end
 
 function stopMusicWithFadeout(duration)
-    stopMusicTween(duration, function(t)
+    musicTween(duration, 1, 0, function(t)
         activeTrack:setVolume(t.volume)
+    end, function()
+        stopMusic()
     end)
 end
 
-function stopMusicWithFadeoutAndSlowDown(duration)
-    stopMusicTween(duration, function(t)
+function pauseMusicWithFadeoutAndSlowDown(duration)
+    musicTween(duration, 1, 0, function(t)
         activeTrack:setPitch(t.volume + 0.01)
         activeTrack:setVolume(t.volume)
+    end, function()
+        pauseMusic()
     end)
+end
+
+function resumeMusicWithFadeIn(duration)
+
+    musicTween(duration, 0, 1, function(t)
+        if not activeTrack:isPlaying() then
+            resumeMusic()
+        end
+        activeTrack:setPitch(t.volume + 0.01)
+        activeTrack:setVolume(t.volume)
+    end, function() end)
 end
 
 -- only one at a time. loops automatically
@@ -77,10 +90,27 @@ function playTrack(trackName)
     end
 end
 
--- stops the shitty OST
 function stopMusic()
     if activeTrack then
         activeTrack:stop()
         activeTrackName = nil
+        activeTrackPos = nil
+        if activeMusicTween then
+            Timer.cancel(activeMusicTween)
+        end
+    end
+end
+
+function pauseMusic()
+    if activeTrack then
+        activeTrackPos = activeTrack:tell("samples")
+        activeTrack:pause()
+    end
+end
+
+function resumeMusic()
+    if activeTrack then
+        activeTrack:play()
+        activeTrack:seek(activeTrackPos, "samples")
     end
 end

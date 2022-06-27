@@ -9,7 +9,7 @@ function enemySystem:process(e)
     if e.enemy.canFire then
         e.enemy.canFire = false
         e.enemy.fire(e, self.world)
-        Timer.after(e.enemy.fireRate, function()
+        self.world.timer:after(e.enemy.fireRate, function()
             e.enemy.canFire = true
         end)
     end

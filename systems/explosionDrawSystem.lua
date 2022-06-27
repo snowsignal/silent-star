@@ -4,13 +4,13 @@ explosionDrawSystem.filter = tiny.requireAll("pos", "scale", "explosion", "size"
 
 
 function explosionDrawSystem:onAdd(e)
-    e.explosion.animHandle = Timer.every(e.explosion.nextFrame, function()
+    e.explosion.animHandle = self.world.timer:every(e.explosion.nextFrame, function()
         e.explosion.frame = e.explosion.frame + 1
     end)
 end
 
 function explosionDrawSystem:onRemove(e)
-    Timer.cancel(e.explosion.animHandle)
+    self.world.timer:cancel(e.explosion.animHandle)
 end
 
 function explosionDrawSystem:process(e)

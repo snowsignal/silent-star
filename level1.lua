@@ -46,6 +46,7 @@ local leftBoundary = { pos = Vector(1, 300), size = Vector(1, 600), boundary = {
 local rightBoundary =  { pos = Vector(799, 300), size = Vector(1, 600), boundary = {}}
 
 function Level1:enter()
+    print("Entered")
     playTrack("level1")
     -- Set up tiny world
     self.world = tiny.world(
@@ -55,7 +56,6 @@ function Level1:enter()
             playerDrawSystem,
             explosionDrawSystem,
             playerMovementSystem,
-            shockSystem,
             enemySystem,
             damageSystem,
             bumpSystem,
@@ -67,6 +67,10 @@ function Level1:enter()
             leftBoundary,
             rightBoundary
     )
+    self.world.timer = Timer.new()
+
+    self.world:add(shockSystem)
+
     self.world.wave = 1
     self.world.wavetotal = 8
 
@@ -88,14 +92,15 @@ end
 local accum = 0
 local frametarget = 1/60
 function Level1:update(dt)
+    self.world.timer:update(dt)
     if self.world.killed and not self.world.shownExplosion then
         self.world.shownExplosion = true
         playSfx("death")
-        stopMusicWithFadeoutAndSlowDown(5)
+        pauseMusicWithFadeoutAndSlowDown(3)
         self.world:add(Explosion:new(self.world.killedPos, Vector(3.5, 3.5)))
         self.world:refresh()
-        Timer.after(3, function()
-            Gamestate.switch(surveyScene)
+        self.world.timer:after(3, function()
+            Gamestate.push(surveyScene:normal())
         end)
     else
         accum = accum + dt
@@ -110,6 +115,16 @@ end
 function Level1:draw()
     self.world:update(dt, drawSystemFilter)
     self:drawWave()
+end
+
+function Level1:resume()
+    print("Resumed")
+    resumeMusicWithFadeIn(2)
+    self.world.killed = false
+    self.world.killedPos = nil
+    self.world.shownExplosion = false
+    self.world:add(Player:new(300, 300))
+    self.world:refresh()
 end
 
 return Level1

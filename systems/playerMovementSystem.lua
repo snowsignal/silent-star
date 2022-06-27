@@ -9,7 +9,7 @@ function playerMovementSystem:process(e)
     if input:down('player-fire') and e.player.canFire then
         e.player.canFire = false
         self.world:add(Projectile:rectangleBullet(e.pos))
-        Timer.after(0.125, function() e.player.canFire = true end)
+        self.world.timer:after(0.125, function() e.player.canFire = true end)
     end
 
     if input:down('player-right') then
